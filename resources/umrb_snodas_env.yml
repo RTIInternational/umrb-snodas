@@ -1,0 +1,19 @@
+name: snodas_assim
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - contextily
+  - pyproj
+  - ca-certificates
+  - certifi
+  - openssl
+  - tqdm
+  - gdal
+  - cartopy
+  - geopandas
+  - psycopg2
+  - netcdf4
+  - statsmodels
+  - pylint
+prefix: /net/home/gregory.fall/mambaforge/envs/snodas_assim
