@@ -1,7 +1,6 @@
-name: snodas_assim
+name: umrb-snodas
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - contextily
   - pyproj
@@ -16,4 +15,4 @@ dependencies:
   - netcdf4
   - statsmodels
   - pylint
-prefix: /net/home/gregory.fall/mambaforge/envs/snodas_assim
+prefix: /Users/greg.fall/mambaforge/envs/umrb-snodas
