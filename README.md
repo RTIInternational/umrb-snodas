@@ -1,6 +1,6 @@
 # UMRB-SNODAS
 
-**Description**:  Put a meaningful, short, plain-language description of what
+**Description**:  Put a , short, plain-language description of what
 this project is trying to accomplish and why it matters.
 Describe the problem(s) this project solves.
 Describe how this software can improve the lives of its audience.
