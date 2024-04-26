@@ -4015,29 +4015,18 @@ def main():
 
         output_img = \
             os.path.splitext(os.path.basename(nudging_layer_path))[0] + \
-            '.png'
+            f'_{args.region_name}.png'
         output_path = os.path.join(output_dir, output_img)
         n_fig.savefig(output_path)
         message = f'Saved nudging layer image to {output_path}'
         logger.info(message)
 
-        # plt.draw()
-        # plt.ioff()
-        # plt.show()
-        # sys.exit(0)
-
     if args.gui:
         plt.pause(1.0)
-    #print(f'plt.isinteractive: {plt.isinteractive()}')
-    #plt.pause(0.1)
-    #print('ok')
 
     if args.quick_look:
         logger.info('Quick look finished.')
         if args.gui:
-            # for i in range(10):
-            #     plt.pause(1.0)
-            #     print(f'pause {i+1}')
             logger.info('Close plot windows to quit.')
             plt.ioff()
             plt.show()
