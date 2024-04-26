@@ -20,7 +20,9 @@ import time
 import logging
 import argparse
 import datetime as dt
+from multiprocessing import Pool
 #from pprint import pprint
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 #import local_logger
 import ops_logger
@@ -34,7 +36,6 @@ import psycopg2
 from netCDF4 import Dataset
 
 from tqdm import tqdm
-from multiprocessing import Pool
 import statsmodels.api as sm
 from scipy import stats
 # from scipy import optimize
@@ -1384,13 +1385,38 @@ def read_idw_points(point_data_path):
     # Replace the missing value set by get_assim_data.pro with NaN.
     pt_df = pt_df.replace(99999, np.nan)
     pt_df = pt_df.replace(-99999, np.nan)
+
+    # Rename columns to match expected conventions.
+    pt_df.rename({'STATION_I': 'STATION_ID',
+                  'STATION_T': 'STATION_TY',
+                  'STATION_E': 'STATION_EL',
+                  'DEM_ELE': 'DEM_ELEVAT',
+                  'FOREST_': 'FOREST_DEN',
+                  'TRUE_FL': 'TRUE_FLAG',
+                  'OB_SWE_': 'OB_SWE_T',
+                  'MD_SWE_': 'MD_SWE_T',
+                  'D_SWE_M': 'D_SWE_MM',
+                  'OB_DEPTH_': 'OB_DEPTH_T',
+                  'MD_DEPTH_': 'MD_DEPTH_T',
+                  'D_DEPTH_M': 'D_DEPTH_MM',
+                  'OB_DENS': 'OB_DENSITY',
+                  'MD_DENS': 'MD_DENSITY',
+                  'D_DEN_M': 'D_DEN_MM',
+                  'D_S_P_O': 'D_S_P_OM',
+                  'D_NSP_O': 'D_NSP_OM',
+                  'OB_NSN_': 'OB_NSN_P',
+                  'MD_NSN_': 'MD_NSN_P'},
+                  axis='columns',
+                  errors='ignore',
+                  inplace=True)
+
     return pt_df
 
 
 def verify_get_assim_data_conventions(pt_df):
     """
     Confirm that the station data being analyzed follows the conventions
-    the get_assim_data program are expected to follow.
+    the get_assim_data program is expected to follow.
     """
     logger = logging.getLogger()
     # df_sub = pt_df.filter(items=['OB_SWE',
@@ -1402,8 +1428,6 @@ def verify_get_assim_data_conventions(pt_df):
     #                              'MD_DENSITY',
     #                              'D_SWE_OM',
     #                              'D_DEPTH_OM']).copy()
-
-    # Verify the conventions expected in the observation dataset.
 
     # If OB_DENSITY is NaN, and both OB_SWE and OB_DEPTH are valid and
     # nonzero, then it must be that one or the other is derived using
@@ -2432,7 +2456,7 @@ def auto_gen_assim_params(args,
     cv_rmse_mm = np.full(num_tests, np.nan, dtype=np.float64)
     cv_mae_mm = np.full(num_tests, np.nan, dtype=np.float64)
     delta_swe_om = pt_no_cn['D_SWE_OM'].to_numpy()
-    delta_swe_range = delta_swe_om.max() - delta_swe_om.min()
+    # delta_swe_range = delta_swe_om.max() - delta_swe_om.min()
     # print(f'\N{GREEK CAPITAL LETTER DELTA}SWE range: {delta_swe_range}')
     # print(np.log10(delta_swe_range))
     # max_cv_r_squared = -1.0e10
@@ -3101,7 +3125,7 @@ def idw_pro_raster_filter(input_grid,
 
         cell_index = np.arange(num_input_rows * num_input_cols)
         process_ind = np.where(input_mask == False)[0]
-        cell_index_process_subset = cell_index[process_ind]
+        # cell_index_process_subset = cell_index[process_ind]
         args = list(zip(cell_index[process_ind],
                         num_points_in_cell.flatten()[process_ind],
                         input_grid.flatten()[process_ind],
