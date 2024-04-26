@@ -1258,13 +1258,13 @@ def check_args(args):
                       'not relevant to the -q option.'
             logger.warning(message)
 
-    if not ops_config() and not args.file_location:
+    if not ops_config() and args.file_location is None:
         message = 'This appears to be a non-operational system; ' + \
                   'the [-f, --file_location] argument must be set.'
         logger.error(message)
         all_args_ok = False
 
-    if ops_config() and args.file_location:
+    if ops_config() and args.file_location is not None:
         message = 'This appears to be an operational system, but ' + \
                   f'all data will be read from {args.file_location[0]} ' + \
                   'rather than operational locations.'
@@ -3452,7 +3452,9 @@ def main():
     logger.info(message)
 
     # Get the DEM layer.
-    if not args.no_database and args.file_location is None:
+    if args.file_location is None and not args.no_database:
+
+        # This is an operations system, so look for the DEM as a GISRS layer.
         dem_elev_layer_name = 'Terrain (GMTED 2010) (30sec) (elevation)'
         dem_elev_path = get_gisrs_layer_data_file_path(dem_elev_layer_name)
         if dem_elev_path is None:
@@ -3461,16 +3463,32 @@ def main():
             logger.error(message)
             sys.exit(1)
     else:
-        if args.file_location is not None:
-            common_raster_dir = os.path.join('..', 'resources')
-            if not os.path.isdir(common_raster_dir):
-                common_raster_dir = args.file_location[0]
-        else:
+
+        if args.file_location is None:
+
+            # This is an operations system and args.file_location was not set,
+            # but args.no_database is True. Use the standard location of
+            # "common_raster" in operations.
             common_raster_dir = os.path.join(nsa_prefix,
                                              'gisrs',
                                              'data',
                                              'common',
                                              'raster')
+
+        else:
+
+            # This may or may not be an operations system, but
+            # args.file_location was set.
+            # First look for a "resources" directory relative to the program
+            # location.
+            common_raster_dir = \
+                os.path.normpath(os.path.join(os.path.dirname(__file__),
+                                              '..', 'resources'))
+            if not os.path.isdir(common_raster_dir):
+
+                # Fall back on args.file_location.
+                common_raster_dir = args.file_location[0]
+
         if not os.path.isdir(common_raster_dir):
             message = f'Common raster directory {common_raster_dir} ' + \
                       'not found.'
@@ -3730,6 +3748,14 @@ def main():
         pt_df['X'].notna() & \
         pt_df['Y'].notna()
     pt_real = pt_df[pt_is_real]
+    # print(len(pt_real))
+    # sys.exit(1)
+
+    # Inventory STATION_TY from the pt_real subset.
+    logger.info('Counts of snow data values by STATION_TY column:')
+    logger.info(pt_real['STATION_TY'].value_counts())
+    message = f'Total # of actual observing stations: {len(pt_real)}'
+    logger.info(message)
 
     # Display the points.
     timer = Timer()
