@@ -1,0 +1,30 @@
+{
+    "terminal.integrated.profiles.windows":{
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": {
+            "source": "Git Bash"
+        },
+        "Anaconda Prompt": {
+            "source": "PowerShell",
+            "args": [
+                "powershell",
+                "-NoExit",
+                "-ExecutionPolicy ByPass",
+                "-NoProfile",
+                "-File C:\\Users\\pmicheletty\\AppData\\Local\\miniconda3\\shell\\condabin\\conda-hook.ps1"
+            ],
+            "icon": "smiley"
+        }
+    }
+}
