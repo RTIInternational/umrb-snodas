@@ -3378,8 +3378,8 @@ def main():
     # Currently not using the method_func business, instead passing the
     # analysis_method string as a keyword for initializing instances of the
     # IDW class in idw_cross_validate and idw_lon_lat_grid.
-    analysis_method = 'classic'
-    #analysis_method = 'with_elev_regression'
+    # analysis_method = 'classic'
+    analysis_method = 'with_elev_regression'
     if analysis_method == 'classic':
         pass
         # method_func = classic
