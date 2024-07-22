@@ -28,6 +28,7 @@ import geo_distance as geodst
 import mn_geo as mng
 
 import geopandas as gpd
+import pandas as pd
 import numpy as np
 from numpy.polynomial import Polynomial
 import psycopg2
@@ -2224,7 +2225,13 @@ def plot_idw_cross_val_results(observed_vals,
     # TODO: get adjustText working on AWS.
     if ADJUST_TEXT_SUPPORTED:
         adjust_text(texts, ax=cv_ax)
-
+        
+        # Save the results to a CSV file. PDM ADDED
+    df = pd.DataFrame({'observed': observed_vals,
+                       'analysis': analysis_vals,
+                       'site_ids': site_ids})
+    df.to_csv(r'C:\Users\clemasters\Research Triangle Institute\CIROH Basecamp - Documents\Projects\0218723.014 - SNODAS\Test_Runs\Cross_Validation_Results\cross_val_12_28_23_updated')
+    
     return cv_fig, cv_ax
 
 
